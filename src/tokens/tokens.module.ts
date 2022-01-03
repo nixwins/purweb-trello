@@ -10,6 +10,7 @@ import { Token } from './tokens.entity';
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.SECRET_KEY,
+        ignoreExpiresIn: false,
       }),
     }),
   ],
