@@ -14,12 +14,12 @@ export class AuthController {
 
   @Post('registration')
   async registration(@Body() user: CreateUserDto) {
-    return this.authService.register(user);
+    return await this.authService.register(user);
   }
 
   @Post('login')
   async login(@Body() user: CreateUserDto) {
-    this.authService.login(user);
-    return { accessToken: '$$$$' };
+    const userData = await this.authService.login(user);
+    return userData;
   }
 }

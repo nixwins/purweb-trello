@@ -2,14 +2,13 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { UserDto } from 'src/users/dto/user.dto';
 import { UsersService } from 'src/users/users.service';
-import { EMAIL_IS_BUSY } from './constants';
-import { hash } from 'bcryptjs';
+import { hash, compare } from 'bcryptjs';
 import { CreateUserDto } from '../users/dto/createUser.dto';
 import { TokensService } from 'src/tokens/token.service';
+import { EMAIL_IS_BUSY, EMAIL_OR_PASSWORD_WRONG } from './constants';
 
 @Injectable()
 export class AuthSerivce {
@@ -49,7 +48,33 @@ export class AuthSerivce {
     }
   }
 
-  async login(user: CreateUserDto) {
-    return user;
+  async login({ email, password }: CreateUserDto) {
+    const user = await this.validateUser(email, password);
+    if (!user) {
+      throw new InternalServerErrorException('koe');
+    }
+    const tokens = await this.tokenService.generateTokens(user);
+    return {
+      ...tokens,
+      user,
+    };
+  }
+
+  private async validateUser(email: string, password: string) {
+    const user = await this.userService.findOne({ email });
+
+    if (!user) {
+      throw new UnauthorizedException(EMAIL_OR_PASSWORD_WRONG);
+    }
+    const isCorrectPassword = await compare(password, user.password);
+
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException(EMAIL_OR_PASSWORD_WRONG);
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+    };
   }
 }
