@@ -53,11 +53,17 @@ export class AuthSerivce {
     if (!user) {
       throw new InternalServerErrorException();
     }
-    const tokens = await this.tokenService.generateTokens(user);
-    return {
-      ...tokens,
-      user,
-    };
+    try {
+      const tokens = await this.tokenService.generateTokens(user);
+
+      await this.tokenService.saveRefreshToken(tokens.refreshToken, user.id);
+      return {
+        ...tokens,
+        user,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   private async validateUser(email: string, password: string) {
