@@ -51,7 +51,7 @@ export class AuthSerivce {
   async login({ email, password }: CreateUserDto) {
     const user = await this.validateUser(email, password);
     if (!user) {
-      throw new InternalServerErrorException('koe');
+      throw new InternalServerErrorException();
     }
     const tokens = await this.tokenService.generateTokens(user);
     return {
