@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/users/dto/user.dto';
 import { Repository } from 'typeorm';
 import { TokenDto } from './dto/token.dto';
-import { Token } from './tokens.entity';
+import { TokenEntity } from './tokens.entity';
 
 @Injectable()
 export class TokensService {
   constructor(
     private readonly jwtService: JwtService,
-    @InjectRepository(Token)
-    private readonly tokenRepository: Repository<Token>,
+    @InjectRepository(TokenEntity)
+    private readonly tokenRepository: Repository<TokenEntity>,
   ) {}
 
   async generateTokens(payload: UserDto): Promise<TokenDto> {
@@ -24,7 +24,7 @@ export class TokensService {
     });
     return { accessToken, refreshToken };
   }
-  async saveRefreshToken(token: string, userId: number): Promise<Token> {
+  async saveRefreshToken(token: string, userId: number): Promise<TokenEntity> {
     const candidateToken = await this.tokenRepository.findOne({ userId });
     const expiresDate = new Date();
     expiresDate.setDate(expiresDate.getDate() + 7);
@@ -34,6 +34,7 @@ export class TokensService {
         candidateToken.expires = expiresDate;
         return await this.tokenRepository.save(candidateToken);
       }
+
       const tokenModel = await this.tokenRepository.save({
         userId,
         refreshToken: token,
