@@ -1,9 +1,6 @@
-import { IsEmail, IsNumber, MinLength } from 'class-validator';
+import { IsEmail, MinLength } from 'class-validator';
 
-export class UserDto {
-  @IsNumber()
-  id: number;
-
+export class CreateUserDto {
   @IsEmail({}, { message: 'Некоректный email' })
   readonly email: string;
 
