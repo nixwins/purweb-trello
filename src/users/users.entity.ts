@@ -1,5 +1,7 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { CardEntity } from 'src/cards/crads.entity';
+import { ColumnEntity } from 'src/columns/columns.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class UserEntity {
@@ -12,4 +14,10 @@ export class UserEntity {
   @Exclude({ toPlainOnly: true })
   @Column()
   password: string;
+
+  @OneToMany(() => ColumnEntity, (column) => column.user)
+  columns: ColumnEntity;
+
+  @OneToMany(() => CardEntity, (card) => card.user)
+  cards: CardEntity;
 }

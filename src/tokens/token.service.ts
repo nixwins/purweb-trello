@@ -16,7 +16,7 @@ export class TokensService {
 
   async generateTokens(payload: UserDto): Promise<TokenDto> {
     const accessToken = await this.jwtService.sign(payload, {
-      expiresIn: '15m',
+      expiresIn: '60m',
     });
     const refreshToken = await this.jwtService.sign(payload, {
       secret: process.env.SECRET_KEY_REFRESH,

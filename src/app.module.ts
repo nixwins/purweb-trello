@@ -5,9 +5,24 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TokensModule } from './tokens/tokens.module';
 import { ColumnsModule } from './columns/columns.module';
+import { CardsModule } from './cards/cards.module';
+import { RouterModule, Routes } from '@nestjs/core';
 
+const routes: Routes = [
+  {
+    path: 'columns',
+    module: ColumnsModule,
+    children: [
+      {
+        path: '/:columnId/cards',
+        module: CardsModule,
+      },
+    ],
+  },
+];
 @Module({
   imports: [
+    RouterModule.register(routes),
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
@@ -26,6 +41,7 @@ import { ColumnsModule } from './columns/columns.module';
     AuthModule,
     TokensModule,
     ColumnsModule,
+    CardsModule,
   ],
 })
 export class AppModule {}

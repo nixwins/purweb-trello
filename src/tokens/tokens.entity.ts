@@ -8,7 +8,7 @@ export class TokenEntity {
   @Column({ unique: true })
   userId: number;
 
-  @Column({ type: 'tinytext' })
+  @Column({ type: 'text' })
   refreshToken: string;
 
   @Column()
